@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Procesamiento de Ecuaciones Cuadráticas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Procesamiento de Ecuaciones Cuadráticas</h1>
+    <h2>Datos de prueba:</h2>
+    <pre id="output"></pre>
+  </div>
+  <script>
+    // Funciones proporcionadas
+    function ordenar_soluciones(soluciones) {
+      // Utilizar el algoritmo de ordenamiento Bubble Sort para ordenar las soluciones en orden descendente
+      let n = soluciones.length;
+      for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n - i - 1; j++) {
+          if (soluciones[j] < soluciones[j + 1]) {
+            [soluciones[j], soluciones[j + 1]] = [soluciones[j + 1], soluciones[j]];
+          }
+        }
+      }
+      return soluciones;
+    }
+
+    function buscar_ecuaciones_validas(vector) {
+      // Función de búsqueda que devuelve las ecuaciones cuadráticas válidas y el conteo de ternas no válidas
+      let ecuaciones_validas = [];
+      let conteo_terna_no_valida = 0;
+
+      for (let i = 0; i < vector.length; i += 3) {
+        let a = vector[i];
+        let b = vector[i + 1];
+        let c = vector[i + 2];
+
+        if (a !== b && b < 0 && c % 2 !== 0 && c % 5 === 0) {
+          ecuaciones_validas.push([a, b, c]);
+        } else {
+          conteo_terna_no_valida++;
+        }
+      }
+
+      return [ecuaciones_validas, conteo_terna_no_valida];
+    }
+
+    function calcular_soluciones_iterativo(a, b, c) {
+      // Función iterativa para calcular las soluciones de una ecuación cuadrática
+      let discriminante = b ** 2 - 4 * a * c;
+      let soluciones = [];
+
+      if (discriminante >= 0) {
+        soluciones.push((-b + Math.sqrt(discriminante)) / (2 * a));
+        soluciones.push((-b - Math.sqrt(discriminante)) / (2 * a));
+      }
+
+      return soluciones;
+    }
+
+    function procesar_vector(vector) {
+      let [ecuaciones_validas, conteo_terna_no_valida] = buscar_ecuaciones_validas(vector);
+      let output = document.getElementById("output");
+
+      output.textContent = `Total de ternas no válidas: ${conteo_terna_no_valida}\n\n`;
+
+      if (ecuaciones_validas.length > 0) {
+        output.textContent += "Ecuaciones cuadráticas válidas con soluciones en orden descendente:\n";
+        ecuaciones_validas.forEach(ecuacion => {
+          let [a, b, c] = ecuacion;
+          let soluciones = calcular_soluciones_iterativo(a, b, c);
+          soluciones = ordenar_soluciones(soluciones);
+          output.textContent += `Soluciones para ${a}x^2 + ${b}x + ${c} = 0:\n`;
+          soluciones.forEach(solucion => {
+            output.textContent += `    x = ${solucion.toFixed(3)}\n`;
+          });
+        });
+      } else {
+        output.textContent += "No se encontraron ecuaciones cuadráticas válidas en el vector.";
+      }
+    }
+
+    // Datos de prueba
+    let vector_ejemplo = [1, -2, 15, 2, -3, 25, 3, -4, 35, 4, -5, 45];
+
+    // Ejecutar el sistema con los datos de prueba
+    procesar_vector(vector_ejemplo);
+  </script>
+</body>
+</html>
